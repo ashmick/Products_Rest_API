@@ -21,23 +21,12 @@ def products_list(request):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
+@api_view (['GET'])
+def product_detail (request,pk):
+    try:
+        product=Products.objects.get(pk=pk)
+        serializer= ProductSerializer(product)
+        return Response (serializer.data)
     
-@api_view (['GET', 'PUT', 'DELETE'])
-def product_detail (request, pk):
-    Products=get_object_or_404(Products, pk=pk)
-    
-    if request.method=='GET':
-        serializer=ProductSerializer(Products)
-        return Response(serializer.data)
-    
-
-    elif request.method=='PUT':
-        serializer=ProductSerializer(Products, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-
-    
-    elif request.method=='DELETE':
-        product_detail()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    except Products.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND);
